@@ -1,6 +1,9 @@
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
+const router = require('./routes/index');
+
+const connectDB = require('./config/connectDB');
 
 const app = express()
 app.use(cors({
@@ -10,12 +13,20 @@ app.use(cors({
     
 ));
 
+app.use(express.json())
+
 const PORT = process.env.PORT || 8080;
 
-app.get('/', (req, res) => {
+app.get('/', (request, response) => {
     response.json({ message: 'Server running at' +PORT });
 })
 
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+//API endpoints
+
+app.use('/api', router);
+
+connectDB().then(() => {
+    app.listen(PORT, () => {
+        console.log(`MongoDB Server is running on port ${PORT}`);
+    })
 })
